@@ -53,11 +53,11 @@ class NamedParameters(Mapping):
                        for key in keys}
         self.iterations = None
 
-    def stochastic(self, iterations=1000):
+    def stochastic(self, iterations=1000, seed=None):
         # Stats_arrays parameters
         self.iterations = iterations
         keys = sorted([key for key in self.data
                        if self.data[key].get('kind') in ('distribution', None)])
         array = sa.UncertaintyBase.from_dicts(*[self.data[key] for key in keys])
-        rng = sa.MCRandomNumberGenerator(array)
+        rng = sa.MCRandomNumberGenerator(array, seed=seed)
         self.values = {key: row.reshape((-1,)) for key, row in zip(keys, rng.generate(iterations))}
